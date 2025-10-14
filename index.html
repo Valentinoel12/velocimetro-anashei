@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocímetro Boeing 737</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <header>
+        <h1>Velocímetro de Boeing 737</h1>
+        <p>Rango de velocidad: 0 a 450 KIAS</p>
+    </header>
+
+    <main>
+        <div class="velocimetro">
+            <canvas id="gauge" width="400" height="400"></canvas>
+        </div>
+
+        <div class="control">
+            <label for="velocidad">Velocidad (KIAS):</label>
+            <input type="range" id="velocidad" min="0" max="450" value="0">
+            <span id="valor">0</span>
+        </div>
+    </main>
+
+    <footer>
+        <p>Página creada por Valen Fernández - 2025</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
