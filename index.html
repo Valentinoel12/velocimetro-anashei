@@ -1,156 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Velocímetro Mach</title>
-<style>
-    body {
-        background-color: #0c1622;
-        color: #e8f1f2;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        padding: 20px;
-        background-color: #13293d;
-        border-bottom: 2px solid #00aaff;
-    }
-    canvas {
-        margin-top: 40px;
-        background-color: #0c1622;
-    }
-    .control {
-        margin-top: 20px;
-    }
-    input[type="range"] {
-        width: 300px;
-    }
-    #valor {
-        font-weight: bold;
-        margin-left: 10px;
-        color: #00ffff;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Velocímetro Mach (Vertical)</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-    <h1>Velocímetro de Avión</h1>
-</header>
+  <header>
+      <h1>Velocímetro Mach (Vertical)</h1>
+  </header>
 
-<canvas id="gauge" width="400" height="400"></canvas>
+  <div class="container">
+      <canvas id="velocimetro" width="120" height="400"></canvas>
 
-<div class="control">
-    <label>Velocidad KIAS:</label>
-    <input type="range" id="velocidad" min="0" max="450" value="0">
-    <span id="valor">0</span>
-</div>
+      <div class="leyenda">
+          <h3>Rangos de Velocidad</h3>
+          <div><span class="color-box" style="background:#ffffff;"></span>Velocidad con flaps (0–150 KIAS)</div>
+          <div><span class="color-box" style="background:#00ff00;"></span>Velocidad normal (150–330 KIAS)</div>
+          <div><span class="color-box" style="background:#ffaa00;"></span>Precaución / turbulencia (330–400 KIAS)</div>
+          <div><span class="color-box" style="background:#ff0000;"></span>Velocidad excesiva (400–450 KIAS)</div>
+      </div>
+  </div>
 
-<script>
-const canvas = document.getElementById("gauge");
-const ctx = canvas.getContext("2d");
-const input = document.getElementById("velocidad");
-const valor = document.getElementById("valor");
+  <div class="control">
+      <label>Velocidad KIAS:</label>
+      <input type="range" id="velocidad" min="0" max="450" value="0">
+      <span id="valor">0</span>
+  </div>
 
-const centerX = 200;
-const centerY = 200;
-const radius = 150;
+  <footer>
+      <p>Velocímetro vertical dinámico con rangos de colores y Mach</p>
+  </footer>
 
-// Rangos de color del velocímetro (KIAS)
-const rangos = [
-    {min: 0, max: 150, color: "#ffffff"},    // Blanco: velocidad para flaps
-    {min: 150, max: 330, color: "#00ff00"},  // Verde: velocidad común
-    {min: 330, max: 400, color: "#ffaa00"},  // Amarillo: viento en frente
-    {min: 400, max: 450, color: "#ff0000"}   // Rojo: velocidad crítica
-];
-
-// Conversión aproximada KIAS -> Mach
-function kiasToMach(kias) {
-    return (kias / 661).toFixed(2);
-}
-
-// Mapear 0-450 KIAS a ángulo 0-2π
-function mapAngle(value) {
-    return (value / 450) * 2 * Math.PI;
-}
-
-// Dibujar arco de velocímetro
-function dibujarArco(start, end, color, grosor){
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, start - Math.PI/2, end - Math.PI/2, false);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = grosor;
-    ctx.stroke();
-}
-
-// Dibujar velocímetro completo
-function dibujarVelocimetro(speed) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Fondo gris oscuro
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-
-    // Dibujar arcos de colores
-    rangos.forEach(r => {
-        let start = mapAngle(r.min);
-        let end = mapAngle(r.max);
-        dibujarArco(start, end, r.color, 20);
-    });
-
-    // Dibujar números cada 50 KIAS
-    ctx.fillStyle = "#fff";
-    ctx.font = "16px Arial";
-    ctx.textAlign = "center";
-    for(let i=0;i<=450;i+=50){
-        let angle = mapAngle(i) - Math.PI/2;
-        let x = centerX + Math.cos(angle)*(radius-30);
-        let y = centerY + Math.sin(angle)*(radius-30);
-        ctx.fillText(i, x, y);
-    }
-
-    // Aguja
-    let angleNeedle = mapAngle(speed) - Math.PI/2;
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.lineTo(centerX + Math.cos(angleNeedle)*(radius-40), centerY + Math.sin(angleNeedle)*(radius-40));
-    ctx.strokeStyle = "#ff0000";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Centro
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 30, 0, 2*Math.PI);
-    ctx.fillStyle = "#000";
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Ventanita Mach
-    ctx.fillStyle = "#00ffff";
-    ctx.font = "bold 18px Arial";
-    ctx.fillText("Mach: " + kiasToMach(speed), centerX, centerY+6);
-}
-
-// Evento slider
-input.addEventListener("input", ()=>{
-    let v = parseInt(input.value);
-    valor.textContent = v;
-    dibujarVelocimetro(v);
-});
-
-// Inicial
-dibujarVelocimetro(0);
-</script>
-
-<footer>
-    <p>Velocímetro dinámico con franjas de colores y Mach</p>
-</footer>
+  <script src="script.js"></script>
 
 </body>
 </html>
