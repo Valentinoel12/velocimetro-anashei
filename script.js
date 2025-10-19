@@ -1,94 +1,71 @@
-const canvas = document.getElementById("gauge");
+const canvas = document.getElementById("velocimetro");
 const ctx = canvas.getContext("2d");
 const input = document.getElementById("velocidad");
 const valor = document.getElementById("valor");
 
-const centerX = 200;
-const centerY = 200;
-const radius = 150;
+const height = canvas.height;
+const width = canvas.width;
 
 // Rangos de color del velocímetro (KIAS)
 const rangos = [
-    {min: 0, max: 150, color: "#ffffff"},    // Blanco
-    {min: 150, max: 330, color: "#00ff00"},  // Verde
-    {min: 330, max: 400, color: "#ffaa00"},  // Amarillo
-    {min: 400, max: 450, color: "#ff0000"}   // Rojo
+    {min: 0, max: 150, color: "#ffffff"},   // Blanco
+    {min: 150, max: 330, color: "#00ff00"}, // Verde
+    {min: 330, max: 400, color: "#ffaa00"}, // Amarillo
+    {min: 400, max: 450, color: "#ff0000"}  // Rojo
 ];
 
-// Conversión aproximada KIAS -> Mach
+// Conversión KIAS -> Mach
 function kiasToMach(kias) {
     return (kias / 661).toFixed(2);
 }
 
-// Mapear 0-450 KIAS a ángulo 0-2π
-function mapAngle(value) {
-    return (value / 450) * 2 * Math.PI;
+// Convierte velocidad a posición vertical (de abajo hacia arriba)
+function mapY(value) {
+    const ratio = value / 450;
+    return height - (ratio * (height - 20));
 }
 
-// Dibujar arco de velocímetro
-function dibujarArco(start, end, color, grosor){
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, start - Math.PI/2, end - Math.PI/2, false);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = grosor;
-    ctx.stroke();
-}
+// Dibuja el velocímetro completo
+function dibujarVelocimetro(velocidad) {
+    ctx.clearRect(0, 0, width, height);
 
-// Dibujar velocímetro completo
-function dibujarVelocimetro(speed) {
-    ctx.clearRect(0, 0, 400, 400);
+    // Fondo oscuro
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, width, height);
 
-    // Fondo gris
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-
-    // Dibujar arcos de colores
+    // Franjas de color
     rangos.forEach(r => {
-        let start = mapAngle(r.min);
-        let end = mapAngle(r.max);
-        dibujarArco(start, end, r.color, 20);
+        const y1 = mapY(r.max);
+        const y2 = mapY(r.min);
+        ctx.fillStyle = r.color;
+        ctx.fillRect(20, y1, 80, y2 - y1);
     });
 
-    // Dibujar números cada 50 KIAS
-    ctx.fillStyle = "#fff";
-    ctx.font = "16px Arial";
-    ctx.textAlign = "center";
-    for(let i=0;i<=450;i+=50){
-        let angle = mapAngle(i) - Math.PI/2;
-        let x = centerX + Math.cos(angle)*(radius-30);
-        let y = centerY + Math.sin(angle)*(radius-30);
-        ctx.fillText(i, x, y);
-    }
-
-    // Aguja
-    let angleNeedle = mapAngle(speed) - Math.PI/2;
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.lineTo(centerX + Math.cos(angleNeedle)*(radius-40), centerY + Math.sin(angleNeedle)*(radius-40));
-    ctx.strokeStyle = "#ff0000";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Centro
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 30, 0, 2*Math.PI);
-    ctx.fillStyle = "#000";
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
+    // Marco exterior
+    ctx.strokeStyle = "#00aaff";
     ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.strokeRect(20, 10, 80, height - 20);
 
-    // Ventanita Mach
+    // Aguja horizontal (indicador)
+    const y = mapY(velocidad);
+    ctx.fillStyle = "#ff0000";
+    ctx.fillRect(10, y - 2, 100, 4);
+
+    // Texto velocidad actual
     ctx.fillStyle = "#00ffff";
     ctx.font = "bold 18px Arial";
-    ctx.fillText("Mach: " + kiasToMach(speed), centerX, centerY+6);
+    ctx.textAlign = "center";
+    ctx.fillText(velocidad + " KIAS", width / 2, y - 10);
+
+    // Ventanita Mach
+    ctx.font = "bold 16px Arial";
+    ctx.fillStyle = "#00ffaa";
+    ctx.fillText("Mach " + kiasToMach(velocidad), width / 2, height - 10);
 }
 
 // Evento slider
-input.addEventListener("input", ()=>{
-    let v = parseInt(input.value);
+input.addEventListener("input", () => {
+    const v = parseInt(input.value);
     valor.textContent = v;
     dibujarVelocimetro(v);
 });
