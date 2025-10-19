@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    padding: 20px;
+    padding: 18px;
     background-color: #13293d;
     border-bottom: 2px solid #00aaff;
 }
@@ -17,18 +17,18 @@ header {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    margin-top: 30px;
-    gap: 40px;
+    margin-top: 22px;
+    gap: 28px;
 }
 
 canvas {
-    background-color: #0c1622;
-    border: 2px solid #00aaff;
-    border-radius: 12px;
+    background-color: transparent;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
 }
 
 .control {
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 input[type="range"] {
@@ -44,16 +44,17 @@ input[type="range"] {
 .leyenda {
     text-align: left;
     background-color: #13293d;
-    padding: 15px;
+    padding: 12px;
     border-radius: 10px;
     border: 1px solid #00aaff;
+    width: 260px;
 }
 
 .leyenda div {
     display: flex;
     align-items: center;
-    margin: 6px 0;
-    font-size: 15px;
+    margin: 8px 0;
+    font-size: 14px;
 }
 
 .color-box {
@@ -64,7 +65,7 @@ input[type="range"] {
 }
 
 footer {
-    margin-top: 40px;
+    margin-top: 32px;
     padding: 10px;
     background-color: #13293d;
 }
