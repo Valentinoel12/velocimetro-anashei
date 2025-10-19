@@ -13,10 +13,18 @@ header {
     border-bottom: 2px solid #00aaff;
 }
 
-.velocimetro {
+.container {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     margin-top: 30px;
+    gap: 40px;
+}
+
+canvas {
+    background-color: #0c1622;
+    border: 2px solid #00aaff;
+    border-radius: 12px;
 }
 
 .control {
@@ -25,6 +33,34 @@ header {
 
 input[type="range"] {
     width: 300px;
+}
+
+#valor {
+    font-weight: bold;
+    margin-left: 10px;
+    color: #00ffff;
+}
+
+.leyenda {
+    text-align: left;
+    background-color: #13293d;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #00aaff;
+}
+
+.leyenda div {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
 }
 
 footer {
